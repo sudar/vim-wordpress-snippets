@@ -1,0 +1,249 @@
+# Vim snippets for WordPress
+#
+# http://sudarmuthu.com/wordpress
+#
+#  Copyright 2013 Sudar Muthu  (http://sudarmuthu.com)
+#  ------------------------------------------------------------------------------
+#  "THE BEER-WARE LICENSE" (Revision 42):
+#  Sudar <http://sudarmuthu.com> wrote this file. 
+#  As long as you retain this notice you can do whatever you want with this stuff.
+#  If we ever meet and you are overcome with gratitude,
+#  feel free to express your feelings via beverage :)
+#  ------------------------------------------------------------------------------
+
+# Empty widget
+snippet widget_skeleton
+	class ${1} extends WP_Widget {
+
+		public function __construct() {
+			// widget actual processes
+			${3}
+		}
+
+		public function form( $instance ) {
+			// outputs the options form on admin
+			${4}
+		}
+
+		public function update( $new_instance, $old_instance ) {
+			// processes widget options to be saved
+			${5}
+		}
+
+		public function widget( $args, $instance ) {
+			// outputs the content of the widget
+			${6}
+		}
+
+	}
+	register_widget( '${2}' );
+
+# Full widget
+snippet widget
+	/**
+	 * Adds ${2:Foo_Widget} widget.
+	 */
+	class ${1:Foo_Widget} extends WP_Widget {
+
+		/**
+		 * Register widget with WordPress.
+		 */
+		public function __construct() {
+			parent::__construct(
+				'${3:foo_widget}', // Base ID
+				'${4:Foo_Widget}', // Name
+				array( 'description' => __( '${5:A Foo Widget}', '${6:text_domain}' ), ) // Args
+			);
+		}
+
+		/**
+		 * Front-end display of widget.
+		 *
+		 * @see WP_Widget::widget()
+		 *
+		 * @param array $args     Widget arguments.
+		 * @param array $instance Saved values from database.
+		 */
+		public function widget( $args, $instance ) {
+			extract( $args );
+			$title = apply_filters( 'widget_title', $instance['title'] );
+
+			echo $before_widget;
+			if ( ! empty( $title ) )
+				echo $before_title . $title . $after_title;
+			echo __( 'Hello, World!', 'text_domain' );
+			echo $after_widget;
+		}
+
+		/**
+		 * Sanitize widget form values as they are saved.
+		 *
+		 * @see WP_Widget::update()
+		 *
+		 * @param array $new_instance Values just sent to be saved.
+		 * @param array $old_instance Previously saved values from database.
+		 *
+		 * @return array Updated safe values to be saved.
+		 */
+		public function update( $new_instance, $old_instance ) {
+			$instance = array();
+			$instance['title'] = strip_tags( $new_instance['title'] );
+
+			return $instance;
+		}
+
+		/**
+		 * Back-end widget form.
+		 *
+		 * @see WP_Widget::form()
+		 *
+		 * @param array $instance Previously saved values from database.
+		 */
+		public function form( $instance ) {
+			if ( isset( $instance[ 'title' ] ) ) {
+				$title = $instance[ 'title' ];
+			}
+			else {
+				$title = __( 'New title', 'text_domain' );
+			}
+			?>
+			<p>
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+			</p>
+			<?php 
+		}
+
+	} // class ${6:Foo_Widget}
+
+	// register Foo_Widget widget
+	add_action( 'widgets_init', create_function( '', 'register_widget( "${7:foo_widget}" );' ) );
+
+# WordPress Plugin Thanks you (markdown)
+snippet plugin_header
+	/**
+	Plugin Name: ${1:Plugin Name}
+	Plugin Script: ${2:plugin-name.php}
+	Plugin URI: ${3:plugin_url}
+	Description: ${4:descripiton}
+	Version: ${5:version}
+	License: GPL
+	Author: ${6:`g:snips_author`}
+	Author URI: ${7:author_url}
+	Donate Link: ${8:http://sudarmuthu.com/if-you-wanna-thank-me}
+	Text Domain: ${9:text-domain}
+	*/
+
+# WordPress Plugin skeleton
+snippet plugin_skeleton
+	/**
+	 * The main Plugin class
+	 *
+	 * @package ${2:PluginClassName}
+	 * @subpackage default
+	 * @author ${6:`g:snips_author`}
+	 */
+	class ${1:PluginClassName} {
+
+		/**
+		 * Initalize the plugin by registering the hooks
+	 	 */
+		function __construct() {
+
+			// Load localization domain
+			load_plugin_textdomain( '${3:text-domain}', false, dirname(plugin_basename(__FILE__)) .  '/languages' );
+
+			// Register hooks
+			add_action('admin_print_scripts', array(&$this, 'add_script'));
+			
+			/* Use the save_post action to do something with the data entered */
+			add_action('save_post', array(&$this, 'save_postdata'));
+
+			//Short code
+			add_shortcode('posts-by-tag', array(&$this, 'shortcode_handler'));
+		}
+
+		/**
+		 * Add script to admin page
+		 */
+		function add_script() {
+			if ($this->is_on_plugin_page()) {
+				// Build in tag auto complete script
+				wp_enqueue_script( 'suggest' );
+			}
+		}
+
+		/**
+		 * When the post is saved, saves our custom data
+		 * @param string $post_id
+		 * @return string return post id if nothing is saved
+		 */
+		function save_postdata( $post_id ) {
+
+			// Don't do anything during Autosave
+			if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+				return $post_id;
+			}
+
+			// verify this came from the our screen and with proper authorization,
+			// because save_post can be triggered at other times
+
+			if ( !array_key_exists('posts_by_tag_noncename', $_POST)) {
+				return $post_id;
+			}
+
+			if ( !wp_verify_nonce( $_POST['posts_by_tag_noncename'], plugin_basename(__FILE__) )) {
+				return $post_id;
+			}
+
+			if ( 'page' == $_POST['post_type'] ) {
+				if ( !current_user_can( 'edit_page', $post_id )) {
+					return $post_id;
+				}
+			} elseif (!current_user_can('edit_post', $post_id)) { 
+				return $post_id;
+			}
+
+			// OK, we're authenticated: we need to find and save the data
+
+			// your code
+		}
+
+		/**
+		 * Expand the shortcode
+		 *
+		 * @param <array> $attributes
+		 */
+		function shortcode_handler($attributes) {
+			$options = shortcode_atts(array(
+				"tags"      => '',   // comma Separated list of tags
+				"number"    => 5,
+				"exclude"   => FALSE,
+				"exclude_current_post"   => FALSE,
+				"excerpt"   => FALSE,
+				"content"   => FALSE,
+				'thumbnail' => FALSE,
+				'order_by'  => 'date',
+				'order'     => 'desc',
+				'author'    => FALSE,
+				'date'      => FALSE,
+				'tag_links' => FALSE,
+				'link_target' => ''
+			), $attributes);
+
+			// your code
+		}
+
+		// PHP4 compatibility
+		function PostsByTag() {
+			$this->__construct();
+		}
+	}
+
+	// Start this plugin once all other plugins are fully loaded
+	add_action( 'init', 'PostsByTag' ); function PostsByTag() { global $PostsByTag; $PostsByTag = new PostsByTag(); }
+
+# TODO: Generate theme skeleton
+# TODO: action and filter function
+# TODO: custom box snippet
+# TODO: Table generation code

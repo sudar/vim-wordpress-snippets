@@ -1,0 +1,12 @@
+{
+  "name" : "vim-wordpress-snippets",
+  "author" : "Sudar <http://sudarmuthu.com>",
+  "repository" : {"type": "git", "url": "git://github.com/sudar/vim-wordpress-snippets.git"},
+  "dependencies" : {
+    "snipmate": {
+      "type": "git",
+      "url": "https://github.com/garbas/vim-snipmate.git"
+    }
+  },
+  "description" : "Vim snippets file for WordPress"
+}
