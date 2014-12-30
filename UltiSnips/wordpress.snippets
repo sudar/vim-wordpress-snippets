@@ -1,0 +1,221 @@
+# Vim snippets for WordPress
+#
+# http://sudarmuthu.com/wordpress
+#
+#  Copyright 2013 Sudar Muthu  (http://sudarmuthu.com)
+#  ------------------------------------------------------------------------------
+#  "THE BEER-WARE LICENSE" (Revision 42):
+#  Sudar <http://sudarmuthu.com> wrote this file.
+#  As long as you retain this notice you can do whatever you want with this stuff.
+#  If we ever meet and you are overcome with gratitude,
+#  feel free to express your feelings via beverage :)
+#  ------------------------------------------------------------------------------
+
+# TODO: Generate theme skeleton
+# TODO: custom box snippet
+# TODO: Table generation code
+
+snippet pluginheader "Plugin Header" b
+/**
+Plugin Name: ${1:Plugin Name}
+Plugin Script: ${2:plugin-name.php}
+Plugin URI: ${3:plugin_url}
+Description: ${4:description}
+Version: ${5:0.1}
+License: GPL
+Author: ${6:`!v g:snips_author`}
+Author URI: ${7:`!v g:snips_author_url`}
+Text Domain: $2
+Donate Link: ${8}
+*/
+endsnippet
+
+#  ------------------------------------------------------------------------------
+# Data Validation functions
+#  ------------------------------------------------------------------------------
+snippet _h "esc_html__"
+esc_html__( '${1}', '${2}' )${3:;}
+endsnippet
+
+snippet _eh "esc_html_e"
+esc_html_e( '${1}', '${2}' )${3:;}
+endsnippet
+
+snippet et "esc_attr"
+esc_attr( '${1}' )${2:;}
+endsnippet
+
+snippet eu "esc_url"
+esc_url( '${1}' )${2:;}
+endsnippet
+
+snippet ee "esc_email"
+esc_email( '${1}' )${2:;}
+endsnippet
+
+#  ------------------------------------------------------------------------------
+# Actions and filters
+#  ------------------------------------------------------------------------------
+snippet aa "add_action function" b
+add_action( '${1}', '${2}' );
+endsnippet
+
+snippet aac "add_action using class" b
+add_action( '${1}', array( ${3:$this}, '${2}' ) );
+endsnippet
+
+snippet aan "add_action using namespace" b
+add_action( '${1}', __NAMESPACE__ . '\\${2}' );
+endsnippet
+
+snippet af "add_filter function" b
+add_filter( '${1}', '${2}' );
+endsnippet
+
+snippet afc "add_filter using class" b
+add_filter( '${1}', array( ${3:$this}, '${2}' ) );
+endsnippet
+
+snippet afn "add_filter using namespace" b
+add_filter( '${1}', __NAMESPACE__ . '\\${2}' );
+endsnippet
+
+#  ------------------------------------------------------------------------------
+# Shortcode
+#  ------------------------------------------------------------------------------
+snippet scode "Add shortcode" b
+add_shortcode( '${1}', '${2}' );
+endsnippet
+
+snippet scodec "Add shortcode using class" b
+add_shortcode( '${1}', array( $this, '${2}' ) );
+endsnippet
+
+snippet scoden "Add shortcode using namespace" b
+add_shortcode( '${1}', __NAMESPACE__ . '\\${2}' );
+endsnippet
+
+snippet scodenf "Add shortcode and callback function using namespace" b
+function $2( ${3:\$atts} ) {
+	$a = shortcode_atts( array(
+		'${4}' => '${5}',
+	), $3 );
+
+	return ${6};
+}
+add_shortcode( '${1}', __NAMESPACE__ . '\\${2}' );
+endsnippet
+
+#  ------------------------------------------------------------------------------
+# These should be refined a bit
+#  ------------------------------------------------------------------------------
+
+# Empty widget
+snippet widget_skeleton
+	class ${1} extends WP_Widget {
+
+		public function __construct() {
+			// widget actual processes
+			${3}
+		}
+
+		public function form( $instance ) {
+			// outputs the options form on admin
+			${4}
+		}
+
+		public function update( $new_instance, $old_instance ) {
+			// processes widget options to be saved
+			${5}
+		}
+
+		public function widget( $args, $instance ) {
+			// outputs the content of the widget
+			${6}
+		}
+
+	}
+	register_widget( '${2}' );
+endsnippet
+
+# Full widget
+snippet widget
+	/**
+	 * Adds ${2:Foo_Widget} widget.
+	 */
+	class ${1:Foo_Widget} extends WP_Widget {
+
+		/**
+		 * Register widget with WordPress.
+		 */
+		public function __construct() {
+			parent::__construct(
+				'${3:foo_widget}', // Base ID
+				'${4:Foo_Widget}', // Name
+				array( 'description' => __( '${5:A Foo Widget}', '${6:text_domain}' ), ) // Args
+			);
+		}
+
+		/**
+		 * Front-end display of widget.
+		 *
+		 * @see WP_Widget::widget()
+		 *
+		 * @param array $args     Widget arguments.
+		 * @param array $instance Saved values from database.
+		 */
+		public function widget( $args, $instance ) {
+			extract( $args );
+			$title = apply_filters( 'widget_title', $instance['title'] );
+
+			echo $before_widget;
+			if ( ! empty( $title ) )
+				echo $before_title . $title . $after_title;
+			echo __( 'Hello, World!', 'text_domain' );
+			echo $after_widget;
+		}
+
+		/**
+		 * Sanitize widget form values as they are saved.
+		 *
+		 * @see WP_Widget::update()
+		 *
+		 * @param array $new_instance Values just sent to be saved.
+		 * @param array $old_instance Previously saved values from database.
+		 *
+		 * @return array Updated safe values to be saved.
+		 */
+		public function update( $new_instance, $old_instance ) {
+			$instance = array();
+			$instance['title'] = strip_tags( $new_instance['title'] );
+
+			return $instance;
+		}
+
+		/**
+		 * Back-end widget form.
+		 *
+		 * @see WP_Widget::form()
+		 *
+		 * @param array $instance Previously saved values from database.
+		 */
+		public function form( $instance ) {
+			if ( isset( $instance[ 'title' ] ) ) {
+				$title = $instance[ 'title' ];
+			}
+			else {
+				$title = __( 'New title', 'text_domain' );
+			}
+			?>
+			<p>
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+			</p>
+			<?php
+		}
+
+	} // class ${6:Foo_Widget}
+
+	// register Foo_Widget widget
+	add_action( 'widgets_init', create_function( '', 'register_widget( "${7:foo_widget}" );' ) );
+endsnippet

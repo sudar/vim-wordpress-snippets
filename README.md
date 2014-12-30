@@ -1,32 +1,27 @@
 vim-wordpress-snippets
 ======================
 
-This repository contains snippets files for WordPress, for the famous [snipmate](https://github.com/garbas/vim-snipmate) plugin for Vim.
+This repository contains vim snippets files for WordPress for the famous [UltiSnips](https://github.com/SirVer/ultisnips) plugin for Vim.
 
 How to install
 -------------
 Unfortunately there are many ways to how to install vim plugins. If you don't see your preferred way of installation plugins please consider updating this section. Basically, installation consists of 2 simple steps:
 
-- Install [vim-snipmate](https://github.com/garbas/vim-snipmate)
+- Install [ultisnips](https://github.com/SirVer/ultisnips)
 - Install vim-wordpress-snippets
 
 Using [Vundle](https://github.com/gmarik/vundle)
 -------------
-
 ```VimL
-    Install snipmate dependencies:
-    Bundle "MarcWeber/vim-addon-mw-utils"
-    Bundle "tomtom/tlib_vim"
-    Bundle "snipmate-snippets"
+    " Install snipmate:
+    Plugin "SirVer/ultisnips"
 
-    Install snipmate:
-    Bundle "garbas/vim-snipmate"
+    " Install snippets:
+    Plugin "sudar/vim-wordpress-snippets"
 
-    Install :
-    Bundle "sudar/vim-wordpress-snippets"
-
-    And :BundleInstall
+    And :PluginInstall
 ```
+
 Contribution
 -------------
 
