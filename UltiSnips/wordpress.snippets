@@ -107,6 +107,82 @@ add_shortcode( '${1}', __NAMESPACE__ . '\\${2}' );
 endsnippet
 
 #  ------------------------------------------------------------------------------
+# Cron related functions
+#  ------------------------------------------------------------------------------
+snippet schedule "Schedule cron job" b
+wp_schedule_event( '${3:time()}', '${2:hourly}', '${1}' );
+endsnippet
+
+snippet clear_schedule "Clear Scheduled cron job" b
+wp_clear_scheduled_hook( '${1}' );
+endsnippet
+
+#  ------------------------------------------------------------------------------
+# HTTP API functions
+#  ------------------------------------------------------------------------------
+snippet wp_get "Do a remote get request using wp_remote_get" b
+$${2:response} = wp_remote_get( ${1:$url}, array(
+		'${3:timeout}' => ${4:3},
+	) );
+
+if ( ! is_wp_error( $$2 ) ) {
+	return wp_remote_retrieve_body( $$2 );
+} else {
+	throw new Exception( 'Error message: ' . $$2->get_error_message() );
+}
+endsnippet
+
+snippet wp_post "Do a remote post request using wp_remote_post" b
+$${2:response} = wp_remote_post( ${1:$url}, array(
+		'${3:timeout}' => ${4:3},
+	) );
+
+if ( ! is_wp_error( $$2 ) ) {
+	return wp_remote_retrieve_body( $$2 );
+} else {
+	throw new Exception( 'Error message: ' . $$2->get_error_message() );
+}
+endsnippet
+#  ------------------------------------------------------------------------------
+# Getters and setters using WordPess coding sytle
+#  ------------------------------------------------------------------------------
+snippet gs_wp "PHP Class Getter Setter using WordPress coding style" b
+/**
+ * Getter for $1.
+ *
+ * @return $2 Current value of $1
+ */
+public function get_$1() {
+	return $this->$1;
+}
+
+/**
+ * Setter for $1.
+ *
+ * @param ${2:string} $$1 New value for $1
+ */
+public function set_${1}( $$1 ) {
+	$this->$1 = $$1;
+}
+${3}
+endsnippet
+
+#  ------------------------------------------------------------------------------
+# DB and WP_Query related
+#  ------------------------------------------------------------------------------
+snippet wp_query "WP_Query" b
+$args = array(
+	'no_found_rows'          => true,  // No need for pagination
+	'update_post_meta_cache' => false, // No need to fetch post meta fields
+	'update_post_term_cache' => false, // No need to fetch taxonomy fields
+	${2:'fields'             => 'ids',  // We need only ids}
+	'${3}' => '${4}',
+);
+
+$wp_query = new WP_Query;
+$${1:result} = $wp_query->query( $args );
+endsnippet
+#  ------------------------------------------------------------------------------
 # These should be refined a bit
 #  ------------------------------------------------------------------------------
 
