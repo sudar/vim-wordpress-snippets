@@ -30,6 +30,60 @@ Donate Link: ${8}
 */
 endsnippet
 
+snippet abs_ex "Exit if ABSPATH is not defined" b
+defined( 'ABSPATH' ) || exit; // Exit if accessed directly
+
+endsnippet
+
+#  ------------------------------------------------------------------------------
+# Factory and Constructors
+#  ------------------------------------------------------------------------------
+
+snippet factory "Hybrid Factory Method" b
+/**
+ * Make this class a "hybrid Singleton".
+ *
+ * @static
+ * @since ${1}
+ */
+public static function factory() {
+	static $instance = false;
+
+	if ( ! $instance ) {
+		$instance = new self;
+	}
+
+	return $instance;
+}
+
+endsnippet
+
+snippet factory_const "Hybrid Factory Method" b
+/**
+ * Use \`factory()\` method to create instance of this class.
+ * Don't create instances directly
+ *
+ * @since ${1}
+ *
+ * @see factory()
+ */
+public function __construct() {
+	${2:$this->setup_hooks();}
+}
+
+endsnippet
+
+snippet f_hook "Setup Hooks Function" b
+/**
+ * Setup Hooks.
+ *
+ * @since ${3:1.0}
+ */
+protected function setup_hooks() {
+	add_action( '${1:save_post}', array( $this, '${2:function_name}' ) );
+}
+
+endsnippet
 #  ------------------------------------------------------------------------------
 # Data Validation functions
 #  ------------------------------------------------------------------------------
@@ -143,6 +197,7 @@ if ( ! is_wp_error( $$2 ) ) {
 	throw new Exception( 'Error message: ' . $$2->get_error_message() );
 }
 endsnippet
+
 #  ------------------------------------------------------------------------------
 # Getters and setters using WordPess coding sytle
 #  ------------------------------------------------------------------------------
