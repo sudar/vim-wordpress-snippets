@@ -14,10 +14,10 @@ Using [Vundle](https://github.com/gmarik/vundle)
 -------------
 ```VimL
     " Install snipmate:
-    Plugin "SirVer/ultisnips"
+    Plugin 'SirVer/ultisnips'
 
     " Install snippets:
-    Plugin "sudar/vim-wordpress-snippets"
+    Plugin 'sudar/vim-wordpress-snippets'
 
     And :PluginInstall
 ```
