@@ -35,6 +35,11 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly
 
 endsnippet
 
+snippet ifajax "If AJAX check" b
+if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+	${1}
+}
+endsnippet
 #  ------------------------------------------------------------------------------
 # Factory and Constructors
 #  ------------------------------------------------------------------------------
