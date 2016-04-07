@@ -288,6 +288,18 @@ snippet ro "PHPDoc object return"
 @return object ${1:Desc}
 endsnippet
 
+snippet ap "PHPDoc access private"
+@access private
+endsnippet
+
+snippet apr "PHPDoc access protected"
+@access protected
+endsnippet
+
+snippet apu "PHPDoc access public"
+@access public
+endsnippet
+
 #  ------------------------------------------------------------------------------
 # DB and WP_Query related
 #  ------------------------------------------------------------------------------
@@ -303,6 +315,7 @@ $args = array(
 $wp_query = new WP_Query;
 $${1:result} = $wp_query->query( $args );
 endsnippet
+
 #  ------------------------------------------------------------------------------
 # These should be refined a bit
 #  ------------------------------------------------------------------------------
