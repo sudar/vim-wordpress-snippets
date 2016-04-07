@@ -352,15 +352,17 @@ class ${1:Foo_Widget} extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
-		extract( $args );
-		$title = apply_filters( 'widget_title', $instance['title'] );
+		$instance = wp_parse_args( $instance, array(
+			'title' => '',
+		) );
 
-		echo $before_widget;
-		if ( ! empty( $title ) ) {
-			echo $before_title . $title . $after_title;
-		}
-		echo __( 'Hello, World!', '$5' );
-		echo $after_widget;
+		echo wp_kses_post( $args['before_widget'] );
+
+		if ( ! empty( $instance['title'] ) ) :
+			echo $args['before_title'] . esc_html( $instance['title'] ) . $args['after_title'];
+		endif; ?>
+
+		<?php echo wp_kses_post( $args['after_widget'] );
 	}
 
 	/**
@@ -374,7 +376,11 @@ class ${1:Foo_Widget} extends WP_Widget {
 	 * @return array Updated safe values to be saved.
 	 */
 	public function update( $new_instance, $old_instance ) {
-		$instance = array();
+		$instance     = array();
+		$new_instance = wp_parse_args( $new_instance, array(
+			'title' => '',
+		) );
+
 		$instance['title'] = strip_tags( $new_instance['title'] );
 
 		return $instance;
@@ -388,17 +394,16 @@ class ${1:Foo_Widget} extends WP_Widget {
 	 * @param array $instance Previously saved values from database.
 	 */
 	public function form( $instance ) {
-		if ( isset( $instance[ 'title' ] ) ) {
-			$title = $instance[ 'title' ];
-		}
-		else {
-			$title = __( 'New title', '$5' );
-		}
+		$instance = wp_parse_args( $instance, array(
+			$title = __( 'New title', '$5' ),
+		) );
 		?>
+
 		<p>
-			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', '$5' ); ?></label>
-			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" >
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php esc_html_e( 'Title:', '$5' ); ?></label>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>">
 		</p>
+
 		<?php
 	}
 }
