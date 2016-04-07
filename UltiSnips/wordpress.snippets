@@ -78,6 +78,16 @@ public function __construct() {
 
 endsnippet
 
+snippet __c "public __construct" b
+/**
+ * Construct a new object.
+ */
+public function __construct(${1:}) {
+	${2:$this->setup_hooks();}
+}
+
+endsnippet
+
 snippet f_hook "Setup Hooks Function" b
 /**
  * Setup Hooks.
